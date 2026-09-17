@@ -75,8 +75,5 @@
     animateBar("week-bar", "week-percent", weekProgress);
     animateBar("month-bar", "month-percent", monthProgress);
     animateBar("year-bar", "year-percent", yearProgress);
-     }, 300);
-})();
-    
   }, 300);
 })();
