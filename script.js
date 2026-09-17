@@ -1,79 +1,40 @@
-(() => {
-  function getProgress(start, end) {
-    const currentTime = new Date();
-    return ((currentTime - start) / (end - start)) * 100;
-  }
+function progress(start, end) {
+  return ((new Date() - start) / (end - start)) * 100;
+}
 
-  function animateBar(barId, textId, percentage) {
-    const bar = document.getElementById(barId);
-    const text = document.getElementById(textId);
+function animate(barId, textId, value) {
+  const bar = document.getElementById(barId);
+  const text = document.getElementById(textId);
+  const target = Math.round(value);
+  let current = 0;
 
-    if (!bar || !text) return;
+  const timer = setInterval(function() {
+    current++;
+    bar.style.width = current + "%";
+    text.textContent = current + "%";
 
-    let current = 0;
-    const target = Math.round(percentage);
+    if (current >= target) {
+      clearInterval(timer);
+    }
+  }, 20);
+}
 
-    const animation = setInterval(() => {
-      current++;
+const now = new Date();
 
-      bar.style.width = current + "%";
-      text.textContent = current + "%";
+const day = now.getDay();
+const weekStart = new Date(now);
+weekStart.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+weekStart.setHours(0, 0, 0, 0);
 
-      if (current >= target) {
-        clearInterval(animation);
-      }
-    }, 20);
-  }
+const weekEnd = new Date(weekStart);
+weekEnd.setDate(weekStart.getDate() + 7);
 
-  const currentDate = new Date();
+const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-  // WEEK — Monday to Sunday
-  const day = currentDate.getDay();
+const yearStart = new Date(now.getFullYear(), 0, 1);
+const yearEnd = new Date(now.getFullYear() + 1, 0, 1);
 
-  const weekStart = new Date(currentDate);
-  weekStart.setDate(
-    currentDate.getDate() - (day === 0 ? 6 : day - 1)
-  );
-  weekStart.setHours(0, 0, 0, 0);
-
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 7);
-
-  // MONTH
-  const monthStart = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1
-  );
-
-  const monthEnd = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    1
-  );
-
-  // YEAR
-  const yearStart = new Date(
-    currentDate.getFullYear(),
-    0,
-    1
-  );
-
-  const yearEnd = new Date(
-    currentDate.getFullYear() + 1,
-    0,
-    1
-  );
-
-  // Calculate progress
-  const weekProgress = getProgress(weekStart, weekEnd);
-  const monthProgress = getProgress(monthStart, monthEnd);
-  const yearProgress = getProgress(yearStart, yearEnd);
-
-  // Animate bars
-  setTimeout(() => {
-    animateBar("week-bar", "week-percent", weekProgress);
-    animateBar("month-bar", "month-percent", monthProgress);
-    animateBar("year-bar", "year-percent", yearProgress);
-  }, 300);
-})();
+animate("week-bar", "week-percent", progress(weekStart, weekEnd));
+animate("month-bar", "month-percent", progress(monthStart, monthEnd));
+animate("year-bar", "year-percent", progress(yearStart, yearEnd));
